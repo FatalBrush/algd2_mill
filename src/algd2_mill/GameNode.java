@@ -1,4 +1,7 @@
 package algd2_mill;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
 import java.util.Random;
 
 public abstract class GameNode extends Node<IAction> implements IGameNode {
@@ -78,7 +81,7 @@ public abstract class GameNode extends Node<IAction> implements IGameNode {
 	}
 
 	@Override
-	public State computeState(State s, GameNode v) {
+	public State computeState(State s, GameNode v) { // clone the state you insert here! not done in method, because it's called recursively
 		if (m_parent == v) {
 			m_data.update(s);
 			return s;
@@ -86,6 +89,19 @@ public abstract class GameNode extends Node<IAction> implements IGameNode {
 		State parentState = ((GameNode)m_parent).computeState(s, v);
 		m_data.update(parentState);
 		return parentState;	
+	}
+	
+	protected boolean isLeaf() {
+		return size() == 0;
+	}
+	
+	protected Collection<Node<IAction>> leaves() {
+		ArrayList<Node<IAction>> list = new ArrayList<>();
+		for (Node<IAction> n : m_children) {
+			if (n.size() == 0) list.add(n);
+			else list.addAll(((GameNode)n).leaves());
+		}
+		return list;
 	}
 
 	@Override

@@ -29,12 +29,14 @@ public class Mill extends Application implements IView{
 		primaryStage.show();
 		
 		m_controller.startHumanGame();
-		
+
 		while(m_controller.getWinner() == IController.NONE) {
+			//m_controller.m_gameTree.print();
 			Scanner s = new Scanner(System.in);
 			String[] play = s.nextLine().split("\\s+");
 			Action a = Action.readln(play);
 			m_controller.play(a);
+			//m_controller.m_gameTree.print();
 			m_controller.compute();
 		}
 			

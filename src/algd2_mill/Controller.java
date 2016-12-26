@@ -19,13 +19,13 @@ import java.io.IOException;
  */
 public class Controller implements IController {	
 	// constants
-	public static int TREEDEPTH = 4;		// relative game tree height measured in full-moves
+	public static int TREEDEPTH = 3;		// relative game tree height measured in full-moves
 	public static boolean VERBOSE = true;	// print additional output
 	// testing
 	public static int[] s_scores = new int[State.NPOS];
 	
 	private IView m_view;			// GUI
-	private IGameTree m_gameTree;	// game tree
+	public IGameTree m_gameTree;	// game tree
 	private byte m_humanColor;		// IController.WHITE or IController.BLACK
 	private boolean m_humanStarts;	// human starts the game
 	private GameClient m_gc;		// client/server module
