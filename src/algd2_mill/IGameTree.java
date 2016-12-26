@@ -1,4 +1,5 @@
 package algd2_mill;
+
 /**
  * Black is a minimum player (minimizer); White is a maximum player (maximizer).
  * 

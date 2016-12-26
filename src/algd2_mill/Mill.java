@@ -7,10 +7,9 @@ import javafx.scene.Scene;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
-public class Mill extends Application implements IView{
+public class Mill extends Application implements IView {
 	
 	private GameBoard gameBoard;
-	public static final int BOARDSIZE = 300;
 	private Controller m_controller;
 	
 	public static void main(String... args) {
@@ -25,22 +24,22 @@ public class Mill extends Application implements IView{
 		
 		Scene scene = new Scene(gameBoard, Color.BURLYWOOD);
 		primaryStage.setScene(scene);
-		primaryStage.setWidth(BOARDSIZE);
-		primaryStage.setHeight(BOARDSIZE);
+		primaryStage.setWidth(300);
+		primaryStage.setHeight(300);
 		primaryStage.show();
 		
 		m_controller.startHumanGame();
 
 //		while(m_controller.getWinner() == IController.NONE) {
 //			//m_controller.m_gameTree.print();
-//			Scanner s = new Scanner(System.in);
+//			//Scanner s = new Scanner(System.in);
 //			String[] play = s.nextLine().split("\\s+");
 //			Action a = Action.readln(play);
 //			m_controller.play(a);
 //			//m_controller.m_gameTree.print();
 //			m_controller.compute();
 //		}
-		m_controller.compute();m_controller.compute();m_controller.compute();m_controller.compute();m_controller.compute();m_controller.compute();m_controller.compute();m_controller.compute();
+		//m_controller.compute();m_controller.compute();m_controller.compute();m_controller.compute();m_controller.compute();m_controller.compute();m_controller.compute();m_controller.compute();
 	}
 	
 	@Override

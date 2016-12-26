@@ -1,4 +1,5 @@
 package algd2_mill;
+
 /**
  * A MinNode is a child of a MaxNode
  * 
