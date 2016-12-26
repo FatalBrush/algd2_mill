@@ -4,12 +4,13 @@ import java.util.Scanner;
 import algd2_mill.IController.Status;
 import javafx.application.Application;
 import javafx.scene.Scene;
+import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
 public class Mill extends Application implements IView{
 	
 	private GameBoard gameBoard;
-	private static int s_boardSize = 300;
+	public static final int BOARDSIZE = 300;
 	private Controller m_controller;
 	
 	public static void main(String... args) {
@@ -22,24 +23,24 @@ public class Mill extends Application implements IView{
 		gameBoard = new GameBoard(m_controller);
 		prepareBoard();
 		
-		Scene scene = new Scene(gameBoard);
+		Scene scene = new Scene(gameBoard, Color.BURLYWOOD);
 		primaryStage.setScene(scene);
-		primaryStage.setWidth(s_boardSize);
-		primaryStage.setHeight(s_boardSize);
+		primaryStage.setWidth(BOARDSIZE);
+		primaryStage.setHeight(BOARDSIZE);
 		primaryStage.show();
 		
 		m_controller.startHumanGame();
 
-		while(m_controller.getWinner() == IController.NONE) {
-			//m_controller.m_gameTree.print();
-			Scanner s = new Scanner(System.in);
-			String[] play = s.nextLine().split("\\s+");
-			Action a = Action.readln(play);
-			m_controller.play(a);
-			//m_controller.m_gameTree.print();
-			m_controller.compute();
-		}
-			
+//		while(m_controller.getWinner() == IController.NONE) {
+//			//m_controller.m_gameTree.print();
+//			Scanner s = new Scanner(System.in);
+//			String[] play = s.nextLine().split("\\s+");
+//			Action a = Action.readln(play);
+//			m_controller.play(a);
+//			//m_controller.m_gameTree.print();
+//			m_controller.compute();
+//		}
+		m_controller.compute();m_controller.compute();m_controller.compute();m_controller.compute();m_controller.compute();m_controller.compute();m_controller.compute();m_controller.compute();
 	}
 	
 	@Override
@@ -52,6 +53,7 @@ public class Mill extends Application implements IView{
 	public void prepareBoard() {
 		
 	}
+	
 	@Override
 	public void setComputerName(String name) {
 		// TODO Auto-generated method stub
