@@ -20,20 +20,21 @@ public class GameBoard extends Pane {
 	private Label m_player2Status = new Label("asdas");
 	private static final double SIZE = 300;
 	private static final double STONESIZE = 25;
-	private List<HitBox> hitBoxes = new ArrayList<>(State.NPOS);
+	private List<HitBox> m_hitBoxes = new ArrayList<>(State.NPOS);
+	private ActionPM m_actionResultingInMill;
+	private byte m_from = -1;
 	
 	public GameBoard(Controller controller) {
 		m_controller = controller;
 		getChildren().add(m_canvas);
 		for (byte pos = 0; pos < State.NPOS; pos++) {
 			int x = scaleX(State.BOARD[pos].x), y = scaleY(State.BOARD[pos].y);
-			hitBoxes.add(new HitBox(pos, x, y, STONESIZE/2));
+			m_hitBoxes.add(new HitBox(pos, x, y, STONESIZE/2));
 		}
-		getChildren().addAll(hitBoxes);
+		getChildren().addAll(m_hitBoxes);
 	}
 	
-	private void draw() {
-		
+	public void draw() {
 		// Background
 		GraphicsContext gc = m_canvas.getGraphicsContext2D();
 		gc.setFill(Color.BURLYWOOD);
@@ -78,13 +79,13 @@ public class GameBoard extends Pane {
 	
 	public void showAction(Action a, boolean isComputerAction) {
 		
-		if (isComputerAction) System.out.println("PC ACT");
-		
-		try {
-			a.writeln(new DataOutputStream(System.out));
-			System.out.println(m_state);
-		} catch (IOException e) {
-		}
+//		if (isComputerAction) System.out.println("PC ACT");
+//		
+//		try {
+//			a.writeln(new DataOutputStream(System.out));
+//			System.out.println(m_state);
+//		} catch (IOException e) {
+//		}
 		draw();
 	}
 	
@@ -95,8 +96,31 @@ public class GameBoard extends Pane {
 			this.pos = pos;
 			setFill(Color.TRANSPARENT);
 			setOnMouseClicked(e -> {
-				m_controller.play(new Placing(m_controller.humanColor(), pos));
-				m_controller.compute();
+				byte c = m_controller.humanColor();
+				Action a = null;
+				if (m_actionResultingInMill != null) {
+					a = new Taking(m_actionResultingInMill, pos);
+					m_actionResultingInMill = null;
+				}
+				else if (m_from > -1) { // we're in a moving or jumping action and need to complete it
+					a = new Moving(c, m_from, pos);
+				}
+				else if (m_state.placingPhase(c)) {
+					a = new Placing(c, pos);
+					m_from = -1;
+				}
+				else { // if moving or jumping: need to select another pos (from and to)
+					m_from = pos;
+				}
+				switch (m_controller.play(a)) {
+					case OK: m_controller.compute(); break;
+					case CLOSEDMILL: m_actionResultingInMill = (ActionPM)a; break;
+					case INVALIDACTION: break;
+					case FINISHED: break;
+				}
+				
+				
+				
 			});
 			setOnMouseEntered(e -> setStroke(Color.RED));
 			setOnMouseExited(e -> setStroke(Color.TRANSPARENT));

@@ -50,7 +50,8 @@ public class Mill extends Application implements IView {
 	}
 	@Override
 	public void prepareBoard() {
-		
+		gameBoard.setState(new State());
+		gameBoard.draw();
 	}
 	
 	@Override
