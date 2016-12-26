@@ -16,7 +16,7 @@ public class GameTreeTest {
 
 	@Test
 	public void test() {
-		t.create(2, null);
+		t.create(1, null);
 		t.print();
 		System.out.println(((GameNode)t.m_root.m_children.poll().m_children.poll()).computeState(t.currentState(), (GameNode)t.m_root));
 	}

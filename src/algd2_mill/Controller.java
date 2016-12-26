@@ -19,7 +19,7 @@ import java.io.IOException;
  */
 public class Controller implements IController {	
 	// constants
-	public static int TREEDEPTH = 2;		// relative game tree height measured in full-moves
+	public static int TREEDEPTH = 4;		// relative game tree height measured in full-moves
 	public static boolean VERBOSE = true;	// print additional output
 	// testing
 	public static int[] s_scores = new int[State.NPOS];
@@ -146,12 +146,12 @@ public class Controller implements IController {
 		m_view.prepareBoard();	
 		
 		// create new game tree
-		m_gameTree = new GameTree();		
+		m_gameTree = new GameTree();
 		if (b) {
 			// computer will open the game
 			m_gameTree.create(TREEDEPTH, null);
 			if (VERBOSE) System.out.println("\tgame tree created; tree size: " + m_gameTree.size());
-			m_gameTree.print();
+			//m_gameTree.print();
 		}
 	}
 	
@@ -221,7 +221,7 @@ public class Controller implements IController {
 				m_gameTree.create(TREEDEPTH, (Placing)a);
 				s = m_gameTree.currentState();
 				if (VERBOSE) System.out.println("Human has played\n\ttree size: " + m_gameTree.size());
-				m_gameTree.print();
+				//m_gameTree.print();
 
 			} else {
 				m_view.updateBoard(m_gameTree.currentState(), a, false);
@@ -246,7 +246,7 @@ public class Controller implements IController {
 					// play human player action a
 					m_gameTree.humanPlayer(a);
 					if (VERBOSE) System.out.println("Human has played\n\ttree size: " + m_gameTree.size());
-					m_gameTree.print();
+					//m_gameTree.print();
 				}
 			} else {
 				if (VERBOSE) System.out.println("Human played an invalid action");
@@ -285,7 +285,7 @@ public class Controller implements IController {
 					// play human player action a
 					m_gameTree.humanPlayer(a);
 					if (VERBOSE) System.out.println("Human has played\n\ttree size: " + m_gameTree.size());
-					m_gameTree.print();
+					//m_gameTree.print();
 					
 					m_view.updateBoard(m_gameTree.currentState(), a, false);
 					if (s.finished()) {
@@ -328,7 +328,7 @@ public class Controller implements IController {
 		// compute computer player action
 		Action a = m_gameTree.computerPlayer();
 		if (VERBOSE) System.out.println("Computer has played\n\ttree size: " + m_gameTree.size());
-		m_gameTree.print();	
+		//m_gameTree.print();	
 		
 		// redraw game board: current game tree state is the state after computer played
 		m_view.updateBoard(m_gameTree.currentState(), a, true);
@@ -345,7 +345,7 @@ public class Controller implements IController {
 			return Status.FINISHED;
 		} else {
 			System.out.println("\ttree size: " + m_gameTree.size());
-			m_gameTree.print();
+			//m_gameTree.print();
 			return Status.OK;
 		}
 	}

@@ -11,20 +11,19 @@ public class GameBoard extends BorderPane {
 	
 	public GameBoard(Controller controller) throws IOException {
 		m_controller = controller;
-		controller.startHumanGame();
 	}
 	
 	public void setState(State s) {
 		m_state = s;
-		System.out.println(s);
 	}
 	
 	public void showAction(Action a, boolean isComputerAction) {
 		
-		
+		if (isComputerAction) System.out.println("PC ACT");
 		
 		try {
 			a.writeln(new DataOutputStream(System.out));
+			System.out.println(m_state);
 		} catch (IOException e) {
 		}
 	}
