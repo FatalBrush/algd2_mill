@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import javafx.beans.InvalidationListener;
+import javafx.beans.Observable;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Label;
@@ -15,23 +17,31 @@ public class GameBoard extends Pane {
 	
 	private State m_state;
 	private Controller m_controller;
-	private Canvas m_canvas = new Canvas(300, 300);
+	private Canvas m_canvas = new Canvas();
 	private Label m_player1Status = new Label("asdas");
 	private Label m_player2Status = new Label("asdas");
-	private static final double SIZE = 300;
 	private static final double STONESIZE = 25;
 	private List<HitBox> m_hitBoxes = new ArrayList<>(State.NPOS);
-	private ActionPM m_actionResultingInMill;
-	private byte m_from = -1;
+	private ActionPM m_actionResultingInMill; // used for taking action in hitbox clickevent. Not null means Taking Action is in progress.
+	private byte m_from = -1; // used for moving and jumping actions in hitbox clickevent. Greater -1 means moving/jumping action is in progress.
 	
 	public GameBoard(Controller controller) {
 		m_controller = controller;
 		getChildren().add(m_canvas);
 		for (byte pos = 0; pos < State.NPOS; pos++) {
-			int x = scaleX(State.BOARD[pos].x), y = scaleY(State.BOARD[pos].y);
-			m_hitBoxes.add(new HitBox(pos, x, y, STONESIZE/2));
+			m_hitBoxes.add(new HitBox(pos, STONESIZE/2));
 		}
 		getChildren().addAll(m_hitBoxes);
+		
+		// make gui dynamic
+		m_canvas.widthProperty().bind(widthProperty());
+		m_canvas.heightProperty().bind(heightProperty());
+		InvalidationListener listener = l -> {
+			m_hitBoxes.forEach(h -> h.calculatePosition());
+			draw();
+		};
+		heightProperty().addListener(listener);
+		widthProperty().addListener(listener);
 	}
 	
 	public void draw() {
@@ -70,11 +80,11 @@ public class GameBoard extends Pane {
 	}
 	
 	private int scaleX(int x) {
-		return (int) (SIZE * 1/20 + x * SIZE * 9/10 /6);
+		return (int) (m_canvas.getWidth() * 1/20 + x * m_canvas.getWidth() * 9/10 /6);
 	}
 	
 	private int scaleY(int y) {
-		return (int) (SIZE * 1/20 +  y * SIZE * 9/10 /6);
+		return (int) (m_canvas.getHeight() * 1/20 +  y * m_canvas.getHeight() * 9/10 /6);
 	}
 	
 	public void showAction(Action a, boolean isComputerAction) {
@@ -91,39 +101,43 @@ public class GameBoard extends Pane {
 	
 	class HitBox extends Circle {
 		byte pos;
-		public HitBox(byte pos, int x, int y, double r) {
-			super(x, y, r);
+		public HitBox(byte pos, double r) {
+			super(r);
 			this.pos = pos;
+			calculatePosition();
 			setFill(Color.TRANSPARENT);
 			setOnMouseClicked(e -> {
 				byte c = m_controller.humanColor();
 				Action a = null;
-				if (m_actionResultingInMill != null) {
-					a = new Taking(m_actionResultingInMill, pos);
-					m_actionResultingInMill = null;
-				}
-				else if (m_from > -1) { // we're in a moving or jumping action and need to complete it
+				if (m_from > -1) { // we're in a moving or jumping action and need to complete it
 					a = new Moving(c, m_from, pos);
+					m_from = -1; // must chose from and to again if failed
+				}
+				else if (m_actionResultingInMill != null) { // if we made a mill previous move
+					a = new Taking(m_actionResultingInMill, pos); // take the clicked stone
 				}
 				else if (m_state.placingPhase(c)) {
 					a = new Placing(c, pos);
-					m_from = -1;
 				}
 				else { // if moving or jumping: need to select another pos (from and to)
 					m_from = pos;
 				}
 				switch (m_controller.play(a)) {
-					case OK: m_controller.compute(); break;
+					case OK: {
+						m_actionResultingInMill = null;
+						m_controller.compute(); break;
+					}
 					case CLOSEDMILL: m_actionResultingInMill = (ActionPM)a; break;
 					case INVALIDACTION: break;
 					case FINISHED: break;
 				}
-				
-				
-				
 			});
 			setOnMouseEntered(e -> setStroke(Color.RED));
 			setOnMouseExited(e -> setStroke(Color.TRANSPARENT));
+		}
+		void calculatePosition() {
+			setCenterX(scaleX(State.BOARD[pos].x));
+			setCenterY(scaleY(State.BOARD[pos].y));
 		}
 	}
 }
