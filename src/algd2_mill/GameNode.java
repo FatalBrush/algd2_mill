@@ -47,28 +47,19 @@ public abstract class GameNode extends Node<IAction> implements IGameNode {
 			for (byte pos = 0; pos < State.NPOS; pos++) { // try all possible Placing actions
 				if (rootState.isValidPlace(pos, color)) { 
 					ActionPM a = new Placing(color, pos);
-					State s = rootState.clone();
-					a.update(s);
-					if (!s.inMill(pos, color)) { // if Placing does not result in a mill
-						root.add(a);
-						nodesAdded++;
-					}
-					else if(s.takingIsPossible(State.oppositeColor(color))) { // if Placing does result in a mill: it can become several Taking actions
-						for (byte takepos = 0; takepos < State.NPOS; takepos++) {
-							if (s.isValidTake(takepos, State.oppositeColor(color))) {
-								root.add(new Taking(a, takepos));
-								nodesAdded++;
-							}
-						}
-					}
+					nodesAdded += createTakingNodes(a, color, root, rootState, pos);
 				}
 			}
 		}
-		else if (rootState.movingPhase(color)) {
-
-		}
-		else if (rootState.jumpingPhase(color)) {
-	
+		else { // if moving or jumping phase
+			for (byte from = 0; from < State.NPOS; from++) { // try all possible Moving actions
+				for (byte to = 0; to < State.NPOS; to++) {
+					if (rootState.isValidMove(from, to, color)) {
+						ActionPM a = new Moving(color, from, to);
+						nodesAdded += createTakingNodes(a, color, root, rootState, to);
+					}
+				}
+			}
 		}
 		
 		if (++curHeight == height) return nodesAdded;
@@ -84,6 +75,32 @@ public abstract class GameNode extends Node<IAction> implements IGameNode {
 
 	}
 
+	/**
+	 * 
+	 * @param rootState state to check, will not change (is cloned)
+	 * @param a action that leads to Taking
+	 * @param color the color of the player that takes a stone
+	 * @return amount of nodes created
+	 */
+	private int createTakingNodes(ActionPM a, byte color, GameNode root, State rootState, byte pos) {
+		int nodesAdded = 0;
+		State s = rootState.clone();
+		a.update(s);
+		if (!s.inMill(pos, color)) { // if Placing does not result in a mill
+			root.add(a);
+			nodesAdded++;
+		}
+		else if(s.takingIsPossible(State.oppositeColor(color))) { // if Placing does result in a mill: it can become several Taking actions
+			for (byte takepos = 0; takepos < State.NPOS; takepos++) {
+				if (s.isValidTake(takepos, State.oppositeColor(color))) {
+					root.add(new Taking(a, takepos));
+					nodesAdded++;
+				}
+			}
+		}
+		return nodesAdded;
+	}
+	
 	@Override
 	public State computeState(State s, GameNode v) { // clone the state you insert here! not done in method, because it's called recursively
 		if (m_parent == v) {
