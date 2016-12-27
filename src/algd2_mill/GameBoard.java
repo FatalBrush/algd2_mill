@@ -49,7 +49,7 @@ public class GameBoard extends Pane {
 		GraphicsContext gc = m_canvas.getGraphicsContext2D();
 		gc.setFill(Color.BURLYWOOD);
 		gc.fillRect(0, 0, m_canvas.getWidth(), m_canvas.getHeight());
-		gc.setStroke(Color.BISQUE);
+		gc.setStroke(Color.SADDLEBROWN);
 		gc.setLineWidth(5);
 		gc.strokeRect(scaleX(0), scaleY(0), scaleX(6)-scaleX(0), scaleY(6)-scaleY(0));
 		gc.strokeRect(scaleX(1), scaleY(1), scaleX(5)-scaleX(1), scaleY(5)-scaleY(1));
@@ -60,7 +60,7 @@ public class GameBoard extends Pane {
 		gc.strokeLine(scaleX(0), scaleY(3), scaleX(2), scaleY(3));
 		for (byte pos = 0; pos < State.BOARD.length; pos++) {
 			int x = scaleX(State.BOARD[pos].x), y = scaleY(State.BOARD[pos].y);
-			gc.setFill(Color.BISQUE);
+			gc.setFill(Color.SADDLEBROWN);
 			gc.fillOval(x-STONESIZE/4, y-STONESIZE/4, STONESIZE/2, STONESIZE/2);
 		}
 		
@@ -80,11 +80,11 @@ public class GameBoard extends Pane {
 	}
 	
 	private int scaleX(int x) {
-		return (int) (m_canvas.getWidth() * 1/20 + x * m_canvas.getWidth() * 9/10 /6);
+		return (int) (m_canvas.getWidth() * 1/12 + x * m_canvas.getWidth() * 5/6 /6);
 	}
 	
 	private int scaleY(int y) {
-		return (int) (m_canvas.getHeight() * 1/20 +  y * m_canvas.getHeight() * 9/10 /6);
+		return (int) (m_canvas.getHeight() * 1/12 +  y * m_canvas.getHeight() * 5/6 /6);
 	}
 	
 	public void showAction(Action a, boolean isComputerAction) {
