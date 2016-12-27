@@ -47,13 +47,15 @@ public abstract class GameNode extends Node<IAction> implements IGameNode {
 			for (byte pos = 0; pos < State.NPOS; pos++) { // try all possible Placing actions
 				if (rootState.isValidPlace(pos, color)) { 
 					ActionPM a = new Placing(color, pos);
-					if (!rootState.inMill(pos, color)) { // if Placing does not result in a mill
+					State s = rootState.clone();
+					a.update(s);
+					if (!s.inMill(pos, color)) { // if Placing does not result in a mill
 						root.add(a);
 						nodesAdded++;
 					}
-					else if(rootState.takingIsPossible(color)) { // if Placing does result in a mill: it can become several Taking actions
+					else if(s.takingIsPossible(State.oppositeColor(color))) { // if Placing does result in a mill: it can become several Taking actions
 						for (byte takepos = 0; takepos < State.NPOS; takepos++) {
-							if (rootState.isValidTake(takepos, color)) {
+							if (s.isValidTake(takepos, State.oppositeColor(color))) {
 								root.add(new Taking(a, takepos));
 								nodesAdded++;
 							}
@@ -71,6 +73,8 @@ public abstract class GameNode extends Node<IAction> implements IGameNode {
 		
 		if (++curHeight == height) return nodesAdded;
 		
+		
+		//TODO maybe avoid computeState and instead just update a cloned version
 		// if tree is not deep enough after adding 1 more level:
 		for (Object n : root.m_children.toArray()) { // add 1 more level on each child (toArray() to avoid ConcurrentModificationException)
 			nodesAdded += create(curHeight, height, State.oppositeColor(color), (GameNode)n, ((GameNode)n).computeState(rootState.clone(), root));

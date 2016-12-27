@@ -96,6 +96,7 @@ public class GameBoard extends Pane {
 //			System.out.println(m_state);
 //		} catch (IOException e) {
 //		}
+		m_controller.m_gameTree.print();
 		draw();
 	}
 	

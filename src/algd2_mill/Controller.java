@@ -22,7 +22,7 @@ import algd2_mill.model.*;
  */
 public class Controller implements IController {	
 	// constants
-	public static int TREEDEPTH = 3;		// relative game tree height measured in full-moves
+	public static int TREEDEPTH = 2;		// relative game tree height measured in full-moves
 	public static boolean VERBOSE = true;	// print additional output
 	// testing
 	public static int[] s_scores = new int[State.NPOS];
@@ -244,6 +244,7 @@ public class Controller implements IController {
 					if (VERBOSE) System.out.println("Human closed mill\n\ttree size: " + m_gameTree.size());
 					// redraw game board
 					m_view.updateBoard(sCopy, a, false);
+					//m_gameTree.print();
 					return Status.CLOSEDMILL;		
 				} else {
 					// play human player action a
