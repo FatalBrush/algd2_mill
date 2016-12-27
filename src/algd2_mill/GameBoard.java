@@ -96,7 +96,7 @@ public class GameBoard extends Pane {
 //			System.out.println(m_state);
 //		} catch (IOException e) {
 //		}
-		m_controller.m_gameTree.print();
+		//m_controller.m_gameTree.print();
 		draw();
 	}
 	
@@ -123,14 +123,16 @@ public class GameBoard extends Pane {
 				else { // if moving or jumping: need to select another pos (from and to)
 					m_from = pos;
 				}
-				switch (m_controller.play(a)) {
-					case OK: {
-						m_actionResultingInMill = null;
-						m_controller.compute(); break;
+				if (a != null) {
+					switch (m_controller.play(a)) {
+						case OK: {
+							m_actionResultingInMill = null;
+							m_controller.compute(); break;
+						}
+						case CLOSEDMILL: m_actionResultingInMill = (ActionPM)a; break;
+						case INVALIDACTION: break;
+						case FINISHED: break;
 					}
-					case CLOSEDMILL: m_actionResultingInMill = (ActionPM)a; break;
-					case INVALIDACTION: break;
-					case FINISHED: break;
 				}
 			});
 			setOnMouseEntered(e -> setStroke(Color.RED));
