@@ -24,6 +24,8 @@ public class GameBoard extends Pane {
 	private List<HitBox> m_hitBoxes = new ArrayList<>(State.NPOS);
 	private ActionPM m_actionResultingInMill; // used for taking action in hitbox clickevent. Not null means Taking Action is in progress.
 	private byte m_from = -1; // used for moving and jumping actions in hitbox clickevent. Greater -1 means moving/jumping action is in progress.
+	private byte m_lastMove = -1; // used to indicate where to show a mark on the board to show the last move
+	private byte m_lastTake = -1; // used to indicate where to show a mark on the board to show the last take
 	
 	public GameBoard(Controller controller) {
 		m_controller = controller;
@@ -73,6 +75,19 @@ public class GameBoard extends Pane {
 				gc.fillOval(x-STONESIZE/2, y-STONESIZE/2, STONESIZE, STONESIZE);
 			}
 		}
+		
+		// Last move & take indication
+		if (m_lastMove >= 0) {
+			int x = scaleX(State.BOARD[m_lastMove].x), y = scaleY(State.BOARD[m_lastMove].y);
+			gc.setFill(Color.DARKVIOLET);
+			gc.fillOval(x-STONESIZE/4, y-STONESIZE/4, STONESIZE/2, STONESIZE/2);
+		}
+		if (m_lastTake >= 0) {
+			int x = scaleX(State.BOARD[m_lastTake].x), y = scaleY(State.BOARD[m_lastTake].y);
+			gc.setStroke(Color.ORANGERED);
+			gc.setLineWidth(2);
+			gc.strokeOval(x-STONESIZE/3, y-STONESIZE/3, STONESIZE/1.5, STONESIZE/1.5);
+		}
 	}
 	
 	public void setState(State s) {
@@ -88,7 +103,16 @@ public class GameBoard extends Pane {
 	}
 	
 	public void showAction(Action a, boolean isComputerAction) {
-		
+		if (isComputerAction) {
+			if (a instanceof Taking) {
+				m_lastMove = ((Taking)a).action().m_to;
+				m_lastTake = ((Taking)a).takePosition();
+			}
+			else if(a instanceof ActionPM) {
+				m_lastMove = ((ActionPM)a).m_to;
+				m_lastTake = -1;
+			}
+		}
 //		if (isComputerAction) System.out.println("PC ACT");
 //		
 //		try {
@@ -121,7 +145,8 @@ public class GameBoard extends Pane {
 					a = new Placing(c, pos);
 				}
 				else { // if moving or jumping: need to select another pos (from and to)
-					m_from = pos;
+					if (m_state.color(pos) == c) // make sure a stone of the player is selected
+						m_from = pos;
 				}
 				if (a != null) {
 					switch (m_controller.play(a)) {
