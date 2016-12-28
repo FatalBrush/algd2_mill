@@ -24,7 +24,7 @@ public class Mill extends Application implements IView {
 		
 		Scene scene = new Scene(gameBoard, Color.BURLYWOOD);
 		primaryStage.setScene(scene);
-		primaryStage.setWidth(300);
+		primaryStage.setWidth(350);
 		primaryStage.setHeight(300);
 		primaryStage.show();
 		

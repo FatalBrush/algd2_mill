@@ -36,7 +36,7 @@ public class GameBoard extends Pane {
 		}
 		getChildren().addAll(m_hitBoxes);
 		
-		// make gui dynamic
+		// make gui size dynamic
 		m_canvas.widthProperty().bind(widthProperty());
 		m_canvas.heightProperty().bind(heightProperty());
 		InvalidationListener listener = l -> {
@@ -67,7 +67,19 @@ public class GameBoard extends Pane {
 			gc.fillOval(x-STONESIZE/4, y-STONESIZE/4, STONESIZE/2, STONESIZE/2);
 		}
 		
-		// Stones
+		// Unplaced stones
+		for (int i = 0; i < m_state.unplacedStones(IController.WHITE); i++) {
+			gc.setFill(Color.WHITE);
+			int x = scaleX(-1), y = scaleY(i) * 7/9;
+			gc.fillOval(x-STONESIZE/2, y-STONESIZE/2, STONESIZE, STONESIZE);
+		}
+		for (int i = 0; i < m_state.unplacedStones(IController.BLACK); i++) {
+			gc.setFill(Color.BLACK);
+			int x = scaleX(7), y = scaleY(i) * 7/9;
+			gc.fillOval(x-STONESIZE/2, y-STONESIZE/2, STONESIZE, STONESIZE);
+		}
+		
+		// Stones on field
 		for (byte pos = 0; pos < State.BOARD.length; pos++) {
 			int x = scaleX(State.BOARD[pos].x), y = scaleY(State.BOARD[pos].y);
 			if (m_state.color(pos) != IController.NONE) {
@@ -96,7 +108,7 @@ public class GameBoard extends Pane {
 	}
 	
 	private int scaleX(int x) {
-		return (int) (m_canvas.getWidth() * 1/12 + x * m_canvas.getWidth() * 5/6 /6);
+		return (int) (m_canvas.getWidth() * 1/6 + x * m_canvas.getWidth() * 2/3 /6);
 	}
 	
 	private int scaleY(int y) {
