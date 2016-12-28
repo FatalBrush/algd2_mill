@@ -418,7 +418,7 @@ public class State implements Cloneable {
 			return (winner == IController.BLACK) ? BLACKWINS : WHITEWINS;
 		} else {
 			// compute score
-			return 0;//TODO
+			return 0;//TODO return (int)(Math.random()*100000);
 		}
 	}
 }

@@ -6,6 +6,7 @@ import java.util.List;
 
 import javafx.beans.InvalidationListener;
 import javafx.beans.Observable;
+import javafx.scene.Cursor;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Label;
@@ -124,10 +125,15 @@ public class GameBoard extends Pane {
 		draw();
 	}
 	
+	private void endGame(byte winner) {
+		System.out.println(winner + " has won");
+	}
+	
 	class HitBox extends Circle {
 		byte pos;
 		public HitBox(byte pos, double r) {
 			super(r);
+			setCursor(Cursor.HAND);
 			this.pos = pos;
 			calculatePosition();
 			setFill(Color.TRANSPARENT);
@@ -152,11 +158,15 @@ public class GameBoard extends Pane {
 					switch (m_controller.play(a)) {
 						case OK: {
 							m_actionResultingInMill = null;
-							m_controller.compute(); break;
+							m_controller.compute(); // Computer plays
+							if (m_state.finished()) { // if Computer could end the game: call endGame()
+								endGame(State.oppositeColor(c));
+							}
+							break;
 						}
 						case CLOSEDMILL: m_actionResultingInMill = (ActionPM)a; break;
-						case INVALIDACTION: break;
-						case FINISHED: break;
+						case INVALIDACTION: break; // Just do nothing if the human played an invalid action.
+						case FINISHED: endGame(c); break;
 					}
 				}
 			});
