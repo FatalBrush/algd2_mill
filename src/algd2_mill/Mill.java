@@ -10,7 +10,7 @@ import javafx.stage.Stage;
 
 public class Mill extends Application implements IView {
 	
-	private GameBoard gameBoard;
+	private GameBoard m_gameBoard;
 	private Controller m_controller;
 	
 	public static void main(String... args) {
@@ -20,10 +20,10 @@ public class Mill extends Application implements IView {
 	@Override
 	public void start(Stage primaryStage) throws Exception {
 		m_controller = new Controller(this);
-		gameBoard = new GameBoard(m_controller);
+		m_gameBoard = new GameBoard(m_controller);
 		prepareBoard();
 		
-		Scene scene = new Scene(gameBoard, Color.BURLYWOOD);
+		Scene scene = new Scene(m_gameBoard, Color.BURLYWOOD);
 		primaryStage.setScene(scene);
 		primaryStage.setWidth(350);
 		primaryStage.setHeight(300);
@@ -49,25 +49,24 @@ public class Mill extends Application implements IView {
 	
 	@Override
 	public void updateBoard(State s, Action a, boolean isComputerAction) {
-		gameBoard.setState(s);
-		gameBoard.showAction(a, isComputerAction);
+		m_gameBoard.setState(s);
+		m_gameBoard.showAction(a, isComputerAction);
 		
 	}
 	@Override
 	public void prepareBoard() {
-		gameBoard.setState(new State());
-		gameBoard.draw();
+		m_gameBoard.setState(new State());
+		m_gameBoard.draw();
 	}
 	
 	@Override
 	public void setComputerName(String name) {
-		// TODO Auto-generated method stub
-		
+		m_gameBoard.setComputerName(name);
 	}
+	
 	@Override
 	public void setHumanName(String name) {
-		// TODO Auto-generated method stub
-		
+		m_gameBoard.setHumanName(name);
 	}
 	
 	public void refreshBoard() {

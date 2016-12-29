@@ -27,8 +27,8 @@ public class GameBoard extends Pane {
 	private State m_state;
 	private Controller m_controller;
 	private Canvas m_canvas = new Canvas();
-	private Label m_player1Status = new Label("asdas");
-	private Label m_player2Status = new Label("asdas");
+	private String m_humanName;
+	private String m_computerName;
 	private static final double STONESIZE = 25;
 	private List<HitBox> m_hitBoxes = new ArrayList<>(State.NPOS);
 	private ActionPM m_actionResultingInMill; // used for taking action in hitbox clickevent. Not null means Taking Action is in progress.
@@ -115,6 +115,14 @@ public class GameBoard extends Pane {
 	public void setState(State s) {
 		m_state = s;
 	}
+
+	public void setComputerName(String name) {
+		m_computerName = name;
+	}
+
+	public void setHumanName(String name) {
+		m_humanName = name;
+	}
 	
 	private int scaleX(int x) {
 		return (int) (m_canvas.getWidth() * 1/6 + x * m_canvas.getWidth() * 2/3 /6);
@@ -147,9 +155,10 @@ public class GameBoard extends Pane {
 	}
 	
 	private void endGame(byte winner) {
+		String s = (winner == m_controller.humanColor() ? m_humanName : m_computerName) + " (" + (winner == IController.WHITE ? "white" : "black") + ")";
 	    Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
 	    alert.setTitle("GAME OVER");
-	    alert.setHeaderText((winner == IController.WHITE ? "WHITE" : "BLACK") + " wins in " + m_turns + " turns!");
+	    alert.setHeaderText(s + " wins in " + m_turns + " turns!");
 	    alert.setContentText("Rematch?");
 
 	    Optional<ButtonType> result = alert.showAndWait();
