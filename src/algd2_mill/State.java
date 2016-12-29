@@ -26,7 +26,7 @@ public class State implements Cloneable {
 	public final static int ONEMORESTONE = 2;
 	public final static int POSSIBLEMOVE = 5;
 	public final static int POTENTIALMILL = 20;
-	public final static int MILL = 50;
+	public final static int MILL = 60;
 	
 	// positions
 	public final static byte INVALID = -1;	// invalid position

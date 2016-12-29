@@ -30,6 +30,7 @@ public class GameBoard extends Pane {
 	private byte m_lastMove = -1; // used to indicate where to show a mark on the board to show the last move
 	private byte m_lastTake = -1; // used to indicate where to show a mark on the board to show the last take
 	private int m_turns = 0; // turn counter
+	private boolean m_computerPlaying;
 	
 	public GameBoard(Controller controller) {
 		m_controller = controller;
@@ -176,6 +177,7 @@ public class GameBoard extends Pane {
 			calculatePosition();
 			setFill(Color.TRANSPARENT);
 			setOnMouseClicked(e -> {
+				if (m_computerPlaying) return; // don't allow any actions while computer is thinking
 				byte c = m_controller.humanColor();
 				Action a = null;
 				if (m_from > -1 && pos != m_from) { // we're in a moving or jumping action and need to complete it
@@ -197,7 +199,9 @@ public class GameBoard extends Pane {
 						case OK: {
 							m_turns++;
 							m_actionResultingInMill = null;
+							m_computerPlaying = true;
 							m_controller.compute(); // Computer plays
+							m_computerPlaying = false;
 							if (m_state.finished()) { // if Computer could end the game: call endGame()
 								endGame(State.oppositeColor(c));
 							}
