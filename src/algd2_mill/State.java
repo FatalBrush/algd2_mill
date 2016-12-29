@@ -1,6 +1,8 @@
 package algd2_mill;
 import java.awt.Point;
 
+import com.sun.org.apache.bcel.internal.generic.ICONST;
+
 /**
  * 
  * @author Christoph Stamm
@@ -21,6 +23,10 @@ public class State implements Cloneable {
 	// scores
 	public final static int WHITEWINS = Integer.MAX_VALUE;
 	public final static int BLACKWINS = Integer.MIN_VALUE;
+	public final static int ONEMORESTONE = 2;
+	public final static int POSSIBLEMOVE = 5;
+	public final static int POTENTIALMILL = 20;
+	public final static int MILL = 50;
 	
 	// positions
 	public final static byte INVALID = -1;	// invalid position
@@ -418,7 +424,102 @@ public class State implements Cloneable {
 			return (winner == IController.BLACK) ? BLACKWINS : WHITEWINS;
 		} else {
 			// compute score
-			return (int)(Math.random()*100000); // TODO
+			//return (int)(Math.random()*100000); // TODO
+			
+			int score = 0;
+			for (int i = m_stonesOnBoard[0]; i < m_stonesOnBoard[1]; i++) score -= ONEMORESTONE;
+			for (int i = m_stonesOnBoard[1]; i < m_stonesOnBoard[0]; i++) score += ONEMORESTONE;
+			//score -= countPossibleMoves(IController.BLACK) * POSSIBLEMOVE;
+			//score += countPossibleMoves(IController.WHITE) * POSSIBLEMOVE;
+			score -= countPotentialMills(IController.BLACK) * POTENTIALMILL;
+			score += countPotentialMills(IController.WHITE) * POTENTIALMILL;
+			score -= countMills(IController.BLACK) * MILL;
+			score += countMills(IController.WHITE) * MILL;
+			
+			return score;
 		}
+	}
+	
+	private int countPossibleMoves(byte color) {
+		int count = 0;
+		for (byte from = 0; from < State.NPOS; from++) {
+			for (byte to = 0; to < State.NPOS; to++) {
+				if (canMove(from, to, color)) {
+					count++;
+				}
+			}
+		}
+		return count;
+	}
+	
+	private boolean canMove(byte from, byte to, byte color) {
+		if (from != to && m_board[from] == color && m_board[to] == IController.NONE) {
+			if (m_stonesOnBoard[color] > 3) {
+				int i = 0;
+				int len = MOVES[from].length;
+				while(i < len && MOVES[from][i] != to) i++;
+				return i < len;
+			} else {
+				// jumping allowed
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	private int countMills(byte color) {
+		int count = 0;
+		
+		// count horizontal mills, need to check every third pos
+		for (byte pos = 0; pos < State.NPOS; pos+=3) { 
+			int p1 = pos - (pos%3);
+			int p2 = p1 + 1;
+			int p3 = p2 + 1;
+			
+			if (m_board[p1] == color && m_board[p2] == color && m_board[p3] == color) {
+				count++;
+			}
+		}
+		
+		// count vertical mills, need to check positions 0, 1, 2, 3, 5, 6, 8, 16
+		byte[] positionsToCheck = new byte[] { 0, 1, 2, 3, 5, 6, 8, 16 };
+		for (byte pos : positionsToCheck) {
+			int t = TRANSPOSED[pos];
+			int p1 = t - (t%3);
+			int p2 = p1 + 1;
+			int p3 = p2 + 1;
+			
+			if (m_board[TRANSPOSED[p1]] == color && m_board[TRANSPOSED[p2]] == color && m_board[TRANSPOSED[p3]] == color) {
+				count++;
+			}
+		}
+		return count;
+	}
+	
+	private int countPotentialMills(byte color) {
+		int count = 0;
+		if (placingPhase(color)) {
+			for (byte pos = 0; pos < State.NPOS; pos++) { // try all possible Placing actions
+				if (isValidPlace(pos, color)) { 
+					ActionPM a = new Placing(color, pos);
+					State s = clone();
+					a.update(s);
+					if (s.inMill(pos, color)) count++;
+				}
+			}
+		}
+		else if (movingPhase(color) || jumpingPhase(color)) { 
+			for (byte from = 0; from < State.NPOS; from++) { // try all possible Moving actions
+				for (byte to = 0; to < State.NPOS; to++) {
+					if (isValidMove(from, to, color)) {
+						ActionPM a = new Moving(color, from, to);
+						State s = clone();
+						a.update(s);
+						if (s.inMill(to, color)) count++;
+					}
+				}
+			}
+		}
+		return count;
 	}
 }

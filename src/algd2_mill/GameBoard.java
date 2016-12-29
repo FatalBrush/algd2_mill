@@ -9,6 +9,7 @@ import javafx.scene.Cursor;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
@@ -143,7 +144,7 @@ public class GameBoard extends Pane {
 //			System.out.println(m_state);
 //		} catch (IOException e) {
 //		}
-		//m_controller.m_gameTree.print();
+		m_controller.m_gameTree.print();
 		draw();
 	}
 	

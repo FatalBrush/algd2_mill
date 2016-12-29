@@ -2,6 +2,7 @@ package algd2_mill;
 import java.util.ArrayList;
 import java.util.Collection;
 
+//TODO remove unused branches (alphabeta?)
 public abstract class GameNode extends Node<IAction> implements IGameNode {
 
 	private int m_score;
@@ -86,6 +87,7 @@ public abstract class GameNode extends Node<IAction> implements IGameNode {
 			nodesAdded++;
 		}
 		else if(s.takingIsPossible(State.oppositeColor(color))) { // if Placing does result in a mill: it can become several Taking actions
+			//root.m_score += color == IController.BLACK ? -1*State.POTENTIALMILL : State.POTENTIALMILL; //TODO does this make sense to add to score here? why is m_score even used?
 			for (byte takepos = 0; takepos < State.NPOS; takepos++) {
 				if (s.isValidTake(takepos, State.oppositeColor(color))) {
 					root.add(new Taking(a, takepos));
@@ -122,12 +124,16 @@ public abstract class GameNode extends Node<IAction> implements IGameNode {
 
 	@Override
 	public int score() {
-		// TODO how to do this? i could also just check if its a leaf, and only then computeState() and otherwise just sum up the children? or minmax rather
-		// how to do this efficiently? state should not be stored, so should it really be recalculated every time?
-		// also maybe remove unused branches?
-		if (isLeaf()) return computeState(new State(), null).score();
+		if (isLeaf()) return computeState(new State(), null).score(); // if it's a leaf: calculate the score of the leaf state
 		
-		return ((GameNode)m_children.peek()).score();
+		return ((GameNode)m_children.peek()).score(); // else just return the best/worst (minimax) score of the children
+		
+		// what is m_score for???
+	}
+	
+	@Override
+	public String toString() {
+		return super.toString() + " (" + score() + ")";
 	}
 
 }

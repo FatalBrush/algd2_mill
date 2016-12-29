@@ -45,6 +45,7 @@ public class GameTree extends Tree<IAction> implements IGameTree {
 	}
 	
 	/**
+	 * Cut all the branches that we did not go through to not waste memory.
 	 * @param a The node with Action a is not cut
 	 * @return the next node
 	 */
