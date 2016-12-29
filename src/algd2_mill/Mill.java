@@ -1,7 +1,4 @@
 package algd2_mill;
-import java.util.Scanner;
-
-import algd2_mill.IController.Status;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.scene.Scene;
@@ -27,6 +24,7 @@ public class Mill extends Application implements IView {
 		primaryStage.setScene(scene);
 		primaryStage.setWidth(350);
 		primaryStage.setHeight(300);
+		primaryStage.setTitle("algd2 Mill");
 		primaryStage.show();
 		primaryStage.setOnCloseRequest(e -> {
 			m_controller.exit();
@@ -68,8 +66,4 @@ public class Mill extends Application implements IView {
 	public void setHumanName(String name) {
 		m_gameBoard.setHumanName(name);
 	}
-	
-	public void refreshBoard() {
-		//needed?
-	}	
 }

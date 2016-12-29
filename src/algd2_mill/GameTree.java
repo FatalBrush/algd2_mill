@@ -1,9 +1,6 @@
 package algd2_mill;
 
-import java.util.ArrayList;
 import java.util.Iterator;
-
-import algd2_mill.IController;
 
 public class GameTree extends Tree<IAction> implements IGameTree {
 
