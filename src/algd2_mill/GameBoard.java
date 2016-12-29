@@ -7,6 +7,7 @@ import java.util.List;
 import javax.print.attribute.standard.DialogTypeSelection;
 
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.beans.InvalidationListener;
 import javafx.beans.Observable;
 import javafx.scene.Cursor;
@@ -158,7 +159,8 @@ public class GameBoard extends Pane {
 	    	m_lastTake = -1;
 	        m_controller.setStarter(m_controller.humanColor() == winner); // Computer starts next game if human won
 	    } else {
-	        System.exit(0);
+	    	m_controller.exit();
+	    	Platform.exit();
 	    }
 	}
 	

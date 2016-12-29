@@ -3,6 +3,7 @@ import java.util.Scanner;
 
 import algd2_mill.IController.Status;
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.scene.Scene;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
@@ -27,6 +28,10 @@ public class Mill extends Application implements IView {
 		primaryStage.setWidth(350);
 		primaryStage.setHeight(300);
 		primaryStage.show();
+		primaryStage.setOnCloseRequest(e -> {
+			m_controller.exit();
+			Platform.exit();
+		});
 		
 		m_controller.startHumanGame();
 
