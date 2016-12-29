@@ -1,8 +1,6 @@
 package algd2_mill;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Iterator;
-import java.util.Random;
 
 public abstract class GameNode extends Node<IAction> implements IGameNode {
 
@@ -82,7 +80,7 @@ public abstract class GameNode extends Node<IAction> implements IGameNode {
 	private int createTakingNodes(ActionPM a, byte color, GameNode root, State rootState, byte pos) {
 		int nodesAdded = 0;
 		State s = rootState.clone();
-		a.update(s); //TODO check here somewhere if its a valid move or sth. before updating, else assertionerror
+		a.update(s);
 		if (!s.inMill(pos, color)) { // if Action does not result in a mill
 			root.add(a);
 			nodesAdded++;
@@ -101,7 +99,7 @@ public abstract class GameNode extends Node<IAction> implements IGameNode {
 	@Override
 	public State computeState(State s, GameNode v) { // clone the state you insert here! not done in method, because it's called recursively
 		if (m_parent == v) {
-			m_data.update(s);
+			if (m_data != null) m_data.update(s); // m_data can be null if the computer starts and no action has been done yet
 			return s;
 		}
 		State parentState = ((GameNode)m_parent).computeState(s, v);
@@ -124,8 +122,12 @@ public abstract class GameNode extends Node<IAction> implements IGameNode {
 
 	@Override
 	public int score() {
-		// TODO
-		return (int)(Math.random()*100000);
+		// TODO how to do this? i could also just check if its a leaf, and only then computeState() and otherwise just sum up the children? or minmax rather
+		// how to do this efficiently? state should not be stored, so should it really be recalculated every time?
+		// also maybe remove unused branches?
+		if (isLeaf()) return computeState(new State(), null).score();
+		
+		return ((GameNode)m_children.peek()).score();
 	}
 
 }

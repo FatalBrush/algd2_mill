@@ -177,7 +177,7 @@ public class GameBoard extends Pane {
 			setOnMouseClicked(e -> {
 				byte c = m_controller.humanColor();
 				Action a = null;
-				if (m_from > -1) { // we're in a moving or jumping action and need to complete it
+				if (m_from > -1 && pos != m_from) { // we're in a moving or jumping action and need to complete it
 					a = new Moving(c, m_from, pos);
 					m_from = -1; // must chose from and to again if failed
 				}
