@@ -429,8 +429,8 @@ public class State implements Cloneable {
 			int score = 0;
 			for (int i = m_stonesOnBoard[0]; i < m_stonesOnBoard[1]; i++) score -= ONEMORESTONE;
 			for (int i = m_stonesOnBoard[1]; i < m_stonesOnBoard[0]; i++) score += ONEMORESTONE;
-			//score -= countPossibleMoves(IController.BLACK) * POSSIBLEMOVE;
-			//score += countPossibleMoves(IController.WHITE) * POSSIBLEMOVE;
+			score -= countPossibleMoves(IController.BLACK) * POSSIBLEMOVE;
+			score += countPossibleMoves(IController.WHITE) * POSSIBLEMOVE;
 			score -= countPotentialMills(IController.BLACK) * POTENTIALMILL;
 			score += countPotentialMills(IController.WHITE) * POTENTIALMILL;
 			score -= countMills(IController.BLACK) * MILL;
@@ -454,15 +454,10 @@ public class State implements Cloneable {
 	
 	private boolean canMove(byte from, byte to, byte color) {
 		if (from != to && m_board[from] == color && m_board[to] == IController.NONE) {
-			if (m_stonesOnBoard[color] > 3) {
-				int i = 0;
-				int len = MOVES[from].length;
-				while(i < len && MOVES[from][i] != to) i++;
-				return i < len;
-			} else {
-				// jumping allowed
-				return true;
-			}
+			int i = 0;
+			int len = MOVES[from].length;
+			while(i < len && MOVES[from][i] != to) i++;
+			return i < len;
 		}
 		return false;
 	}
