@@ -4,15 +4,22 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.print.attribute.standard.DialogTypeSelection;
+
+import javafx.application.Application;
 import javafx.beans.InvalidationListener;
 import javafx.beans.Observable;
 import javafx.scene.Cursor;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Label;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
+import java.util.Optional;
+import javafx.scene.control.ButtonType;
+
 
 public class GameBoard extends Pane {
 	
@@ -27,6 +34,7 @@ public class GameBoard extends Pane {
 	private byte m_from = -1; // used for moving and jumping actions in hitbox clickevent. Greater -1 means moving/jumping action is in progress.
 	private byte m_lastMove = -1; // used to indicate where to show a mark on the board to show the last move
 	private byte m_lastTake = -1; // used to indicate where to show a mark on the board to show the last take
+	private int m_turns = 0; // turn counter
 	
 	public GameBoard(Controller controller) {
 		m_controller = controller;
@@ -138,7 +146,20 @@ public class GameBoard extends Pane {
 	}
 	
 	private void endGame(byte winner) {
-		System.out.println(winner + " has won");
+	    Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+	    alert.setTitle("GAME OVER");
+	    alert.setHeaderText((winner == IController.WHITE ? "WHITE" : "BLACK") + " wins in " + m_turns + " turns!");
+	    alert.setContentText("Rematch?");
+
+	    Optional<ButtonType> result = alert.showAndWait();
+	    if (result.get() == ButtonType.OK){
+	    	m_turns = 0;
+	    	m_lastMove = -1;
+	    	m_lastTake = -1;
+	        m_controller.setStarter(m_controller.humanColor() == winner); // Computer starts next game if human won
+	    } else {
+	        System.exit(0);
+	    }
 	}
 	
 	class HitBox extends Circle {
@@ -169,6 +190,7 @@ public class GameBoard extends Pane {
 				if (a != null) {
 					switch (m_controller.play(a)) {
 						case OK: {
+							m_turns++;
 							m_actionResultingInMill = null;
 							m_controller.compute(); // Computer plays
 							if (m_state.finished()) { // if Computer could end the game: call endGame()
