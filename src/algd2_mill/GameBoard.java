@@ -23,7 +23,7 @@ public class GameBoard extends Pane {
 	private Canvas m_canvas = new Canvas();
 	private String m_humanName;
 	private String m_computerName;
-	private static final double STONESIZE = 25;
+	private double m_stonesize = 25;
 	private List<HitBox> m_hitBoxes = new ArrayList<>(State.NPOS);
 	private ActionPM m_actionResultingInMill; // used for taking action in hitbox clickevent. Not null means Taking Action is in progress.
 	private byte m_from = -1; // used for moving and jumping actions in hitbox clickevent. Greater -1 means moving/jumping action is in progress.
@@ -36,7 +36,7 @@ public class GameBoard extends Pane {
 		m_controller = controller;
 		getChildren().add(m_canvas);
 		for (byte pos = 0; pos < State.NPOS; pos++) {
-			m_hitBoxes.add(new HitBox(pos, STONESIZE/2));
+			m_hitBoxes.add(new HitBox(pos, m_stonesize/2));
 		}
 		getChildren().addAll(m_hitBoxes);
 		
@@ -44,7 +44,11 @@ public class GameBoard extends Pane {
 		m_canvas.widthProperty().bind(widthProperty());
 		m_canvas.heightProperty().bind(heightProperty());
 		InvalidationListener listener = l -> {
-			m_hitBoxes.forEach(h -> h.calculatePosition());
+			m_stonesize = Math.max(getHeight(), getWidth())/15;
+			m_hitBoxes.forEach(h -> {
+				h.setRadius(m_stonesize/2);
+				h.calculatePosition();				
+			});
 			draw();
 		};
 		heightProperty().addListener(listener);
@@ -68,19 +72,19 @@ public class GameBoard extends Pane {
 		for (byte pos = 0; pos < State.BOARD.length; pos++) {
 			int x = scaleX(State.BOARD[pos].x), y = scaleY(State.BOARD[pos].y);
 			gc.setFill(Color.SADDLEBROWN);
-			gc.fillOval(x-STONESIZE/4, y-STONESIZE/4, STONESIZE/2, STONESIZE/2);
+			gc.fillOval(x-m_stonesize/4, y-m_stonesize/4, m_stonesize/2, m_stonesize/2);
 		}
 		
 		// Unplaced stones
 		for (int i = 0; i < m_state.unplacedStones(IController.WHITE); i++) {
 			gc.setFill(Color.WHITE);
 			int x = scaleX(-1), y = scaleY(i) * 7/9;
-			gc.fillOval(x-STONESIZE/2, y-STONESIZE/2, STONESIZE, STONESIZE);
+			gc.fillOval(x-m_stonesize/2, y-m_stonesize/2, m_stonesize, m_stonesize);
 		}
 		for (int i = 0; i < m_state.unplacedStones(IController.BLACK); i++) {
 			gc.setFill(Color.BLACK);
 			int x = scaleX(7), y = scaleY(i) * 7/9;
-			gc.fillOval(x-STONESIZE/2, y-STONESIZE/2, STONESIZE, STONESIZE);
+			gc.fillOval(x-m_stonesize/2, y-m_stonesize/2, m_stonesize, m_stonesize);
 		}
 		
 		// Stones on field
@@ -89,7 +93,7 @@ public class GameBoard extends Pane {
 			if (m_state.color(pos) != IController.NONE) {
 				if (m_state.color(pos) == IController.BLACK) gc.setFill(Color.BLACK);
 				else if (m_state.color(pos) == IController.WHITE) gc.setFill(Color.WHITE);
-				gc.fillOval(x-STONESIZE/2, y-STONESIZE/2, STONESIZE, STONESIZE);
+				gc.fillOval(x-m_stonesize/2, y-m_stonesize/2, m_stonesize, m_stonesize);
 			}
 		}
 		
@@ -97,13 +101,12 @@ public class GameBoard extends Pane {
 		if (m_lastMove >= 0) {
 			int x = scaleX(State.BOARD[m_lastMove].x), y = scaleY(State.BOARD[m_lastMove].y);
 			gc.setFill(Color.DARKVIOLET);
-			gc.fillOval(x-STONESIZE/4, y-STONESIZE/4, STONESIZE/2, STONESIZE/2);
+			gc.fillOval(x-m_stonesize/4, y-m_stonesize/4, m_stonesize/2, m_stonesize/2);
 		}
 		if (m_lastTake >= 0) {
 			int x = scaleX(State.BOARD[m_lastTake].x), y = scaleY(State.BOARD[m_lastTake].y);
-			gc.setStroke(Color.ORANGERED);
-			gc.setLineWidth(2);
-			gc.strokeOval(x-STONESIZE/3, y-STONESIZE/3, STONESIZE/1.5, STONESIZE/1.5);
+			gc.setFill(Color.RED);
+			gc.fillOval(x-m_stonesize/4, y-m_stonesize/4, m_stonesize/2, m_stonesize/2);
 		}
 	}
 	
@@ -145,7 +148,7 @@ public class GameBoard extends Pane {
 //			System.out.println(m_state);
 //		} catch (IOException e) {
 //		}
-		m_controller.m_gameTree.print();
+		//m_controller.m_gameTree.print();
 		draw();
 	}
 	
@@ -161,7 +164,8 @@ public class GameBoard extends Pane {
 	    	m_turns = 0;
 	    	m_lastMove = -1;
 	    	m_lastTake = -1;
-	        m_controller.setStarter(m_controller.humanColor() == winner); // Computer starts next game if human won
+	        //m_controller.setStarter(m_controller.humanColor() == winner); // Computer starts next game if human won
+	        m_controller.startHumanGame();
 	    } else {
 	    	m_controller.exit();
 	    	Platform.exit();
