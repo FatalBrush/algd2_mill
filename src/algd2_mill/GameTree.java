@@ -10,12 +10,15 @@ public class GameTree extends Tree<IAction> implements IGameTree {
 	@Override
 	public void create(int height, Placing pa) {
 		m_currentState = new State();
+		GameNode root;
 		byte color = IController.WHITE; // next actions are white if computer starts
 		if (pa != null) { // Human starts with a white action, so next actions are black
 			pa.update(m_currentState);
 			color = IController.BLACK;
+			root = new MaxNode(pa); // root is MaxNode if player starts (because then we already know the first action)
+		} else {
+			root = new MinNode(null); // else MinNode
 		}
-		GameNode root = new MaxNode(pa);
 		m_root = root;
 		m_currentNode = root;
 		m_size = root.create(0, height, color, m_currentNode, m_currentState);
