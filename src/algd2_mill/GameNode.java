@@ -46,7 +46,7 @@ public abstract class GameNode extends Node<IAction> implements IGameNode {
 			for (byte pos = 0; pos < State.NPOS; pos++) { // try all possible Placing actions
 				if (rootState.isValidPlace(pos, color)) { 
 					ActionPM a = new Placing(color, pos);
-					nodesAdded += createTakingNodes(a, color, root, rootState, pos);
+					nodesAdded += createNodes(a, color, root, rootState, pos);
 				}
 			}
 		}
@@ -55,7 +55,7 @@ public abstract class GameNode extends Node<IAction> implements IGameNode {
 				for (byte to = 0; to < State.NPOS; to++) {
 					if (rootState.isValidMove(from, to, color)) {
 						ActionPM a = new Moving(color, from, to);
-						nodesAdded += createTakingNodes(a, color, root, rootState, to);
+						nodesAdded += createNodes(a, color, root, rootState, to);
 					}
 				}
 			}
@@ -72,13 +72,13 @@ public abstract class GameNode extends Node<IAction> implements IGameNode {
 	}
 
 	/**
-	 * 
+	 * creates child nodes by using the given action
 	 * @param rootState state to check, will not change (is cloned)
-	 * @param a action that leads to Taking
-	 * @param color the color of the player that takes a stone
+	 * @param a child nodes will be created based on this action
+	 * @param color the color of the player that played this action
 	 * @return amount of nodes created
 	 */
-	private int createTakingNodes(ActionPM a, byte color, GameNode root, State rootState, byte pos) {
+	private int createNodes(ActionPM a, byte color, GameNode root, State rootState, byte pos) {
 		int nodesAdded = 0;
 		State s = rootState.clone();
 		a.update(s);
@@ -127,8 +127,6 @@ public abstract class GameNode extends Node<IAction> implements IGameNode {
 		if (isLeaf()) return computeState(new State(), null).score(); // if it's a leaf: calculate the score of the leaf state
 		
 		return ((GameNode)m_children.peek()).score(); // else just return the best/worst (minimax) score of the children
-		
-		// what is m_score for???
 	}
 	
 	@Override

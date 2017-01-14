@@ -199,12 +199,17 @@ public class GameBoard extends Pane {
 						m_from = pos;
 				}
 				if (a != null) {
-					switch (m_controller.play(a)) {
+					switch (m_controller.play(a)) { // play the players action
 						case OK: {
 							m_turns++;
 							m_actionResultingInMill = null;
 							m_computerPlaying = true;
-							m_controller.compute(); // Computer plays
+							try {
+								m_controller.compute(); // Computer plays
+							}
+							catch (NullPointerException ex) {
+								endGame(c); // if there are no possible actions for the computer a NullPointerException is thrown and the player wins
+							}
 							m_computerPlaying = false;
 							if (m_state.finished()) { // if Computer could end the game: call endGame()
 								endGame(State.oppositeColor(c));

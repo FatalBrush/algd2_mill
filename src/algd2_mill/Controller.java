@@ -19,7 +19,7 @@ import java.io.IOException;
  */
 public class Controller implements IController {	
 	// constants
-	public static int TREEDEPTH = 2;		// relative game tree height measured in full-moves
+	public static int TREEDEPTH = 3;		// relative game tree height measured in full-moves
 	public static boolean VERBOSE = true;	// print additional output
 	// testing
 	public static int[] s_scores = new int[State.NPOS];

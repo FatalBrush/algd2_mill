@@ -32,8 +32,12 @@ public class GameTree extends Tree<IAction> implements IGameTree {
 	@Override
 	public void humanPlayer(Action a) {
 		m_currentNode = cutUnusedBranches(a);
+		boolean jumpingPhaseBefore = m_currentState.jumpingPhase(IController.WHITE) || m_currentState.jumpingPhase(IController.BLACK);
 		a.update(m_currentState);
-		extendTree(1); // extend tree by 1 level
+		boolean jumpingPhaseAfter = m_currentState.jumpingPhase(IController.WHITE) || m_currentState.jumpingPhase(IController.BLACK);
+		if (jumpingPhaseBefore == jumpingPhaseAfter) // if we didn't just switch to the jumpingphase, increase treeheight
+			extendTree(1); // extend tree by 1 level
+		// otherwise don't increase the treeheight to reduce amounts of calculations
 	}
 
 	@Override
