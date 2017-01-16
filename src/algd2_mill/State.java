@@ -24,8 +24,8 @@ public class State implements Cloneable {
 	public final static int WHITEWINS = Integer.MAX_VALUE;
 	public final static int BLACKWINS = Integer.MIN_VALUE;
 	public final static int ONEMORESTONE = 2;
-	public final static int POSSIBLEMOVE = 5;
-	public final static int POTENTIALMILL = 20;
+	public final static int POSSIBLEMOVE = 20;
+	public final static int POTENTIALMILL = 40;
 	public final static int MILL = 60;
 	
 	// positions
@@ -440,6 +440,11 @@ public class State implements Cloneable {
 		}
 	}
 	
+	/**
+	 * Counts the amount of possible moves color can do.
+	 * @param color
+	 * @return count
+	 */
 	private int countPossibleMoves(byte color) {
 		int count = 0;
 		for (byte from = 0; from < State.NPOS; from++) {
@@ -452,6 +457,13 @@ public class State implements Cloneable {
 		return count;
 	}
 	
+	/**
+	 * Checks if a move is possible.
+	 * @param from
+	 * @param to
+	 * @param color
+	 * @return true or false
+	 */
 	private boolean canMove(byte from, byte to, byte color) {
 		if (from != to && m_board[from] == color && m_board[to] == IController.NONE) {
 			int i = 0;
@@ -462,6 +474,11 @@ public class State implements Cloneable {
 		return false;
 	}
 	
+	/**
+	 * Counts the amount of closed mills color has.
+	 * @param color
+	 * @return amount of closed mills of color
+	 */
 	private int countMills(byte color) {
 		int count = 0;
 		
@@ -491,6 +508,11 @@ public class State implements Cloneable {
 		return count;
 	}
 	
+	/**
+	 * Counts the amount of mills that color can close in the next move.
+	 * @param color
+	 * @return amount of mills that can be closed in next move.
+	 */
 	private int countPotentialMills(byte color) {
 		int count = 0;
 		if (placingPhase(color)) {

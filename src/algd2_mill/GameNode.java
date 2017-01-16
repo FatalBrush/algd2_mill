@@ -2,7 +2,6 @@ package algd2_mill;
 import java.util.ArrayList;
 import java.util.Collection;
 
-//TODO remove unused branches (alphabeta?)
 public abstract class GameNode extends Node<IAction> implements IGameNode {
 
 	private int m_score;
@@ -87,7 +86,6 @@ public abstract class GameNode extends Node<IAction> implements IGameNode {
 			nodesAdded++;
 		}
 		else if(s.takingIsPossible(State.oppositeColor(color))) { // if Placing does result in a mill: it can become several Taking actions
-			//root.m_score += color == IController.BLACK ? -1*State.POTENTIALMILL : State.POTENTIALMILL; //TODO does this make sense to add to score here? why is m_score even used?
 			for (byte takepos = 0; takepos < State.NPOS; takepos++) {
 				if (s.isValidTake(takepos, State.oppositeColor(color))) {
 					root.add(new Taking(a, takepos));
@@ -109,10 +107,17 @@ public abstract class GameNode extends Node<IAction> implements IGameNode {
 		return parentState;	
 	}
 	
+	/**
+	 * @return true if this node is a leaf node
+	 */
 	protected boolean isLeaf() {
 		return size() == 0;
 	}
 	
+	/**
+	 * 
+	 * @return Collection of all leaves (with this node as root)
+	 */
 	protected Collection<Node<IAction>> leaves() {
 		ArrayList<Node<IAction>> list = new ArrayList<>();
 		for (Node<IAction> n : m_children) {

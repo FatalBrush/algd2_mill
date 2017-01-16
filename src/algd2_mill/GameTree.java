@@ -67,6 +67,10 @@ public class GameTree extends Tree<IAction> implements IGameTree {
 		return nextNode;
 	}
 	
+	/**
+	 * Extends the game tree by given amount of levels.
+	 * @param levels
+	 */
 	public void extendTree(int levels) {
 		if (m_currentNode.isLeaf()) {
 			m_size += m_currentNode.create(0, levels, State.oppositeColor(m_currentNode.m_data.color()), m_currentNode, m_currentState);
